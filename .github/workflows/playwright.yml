@@ -1,9 +1,8 @@
 name: "playwright"
-on: # rebuild any PRs and main branch changes
-  pull_request:
+
+on:
   push:
-    branches:
-      - main
+    branches: ["build-test"]
 
 env:
   LOG_LEVEL: ERROR
@@ -15,7 +14,19 @@ env:
 
 jobs:
   end-to-end:
-    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        runs-on:
+          [
+            ubuntu-20.04,
+            ubuntu-22.04,
+            ubicloud-standard-2,
+            ubicloud-standard-4,
+            ubicloud-standard-8,
+            ubicloud-standard-16,
+          ]
+    name: Playwright ${{matrix.runs-on}}
+    runs-on: ${{matrix.runs-on}}
     services:
       postgres:
         image: postgres
